@@ -1,4 +1,4 @@
-const CACHE = 'beelzebub-v2';
+const CACHE = 'beelzebub-v3';
 
 const SHELL = [
   './',
@@ -10,12 +10,30 @@ const SHELL = [
   'apple-touch-icon-180.png',
 ];
 
+// Cross-origin runtime deps. Precached opaquely so the app keeps working
+// after the browser HTTP cache expires. Best-effort: a precache miss never
+// fails the install — the fetch handler will still cache on first network
+// fetch as a fallback.
+const CDN = [
+  'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap',
+  'https://cdn.tailwindcss.com',
+  'https://unpkg.com/react@18.2.0/umd/react.production.min.js',
+  'https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js',
+  'https://unpkg.com/@babel/standalone@7.24.0/babel.min.js',
+];
+
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(SHELL))
-      .then(() => self.skipWaiting())
-  );
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    await c.addAll(SHELL);
+    await Promise.all(CDN.map(async (u) => {
+      try {
+        const res = await fetch(u, { mode: 'no-cors' });
+        await c.put(u, res);
+      } catch {}
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (e) => {
@@ -36,8 +54,6 @@ self.addEventListener('fetch', (e) => {
 
     try {
       const res = await fetch(req);
-      // Cache successful or opaque (cross-origin no-cors) responses so the
-      // CDN-hosted React/Tailwind/Babel/fonts work offline after first load.
       if (res && (res.ok || res.type === 'opaque')) {
         const clone = res.clone();
         caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {});
