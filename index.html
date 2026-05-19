@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#3a2a16" />
 <title>Beelzebub's Tales</title>
 <link rel="manifest" href="manifest.webmanifest" />
-<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
 <meta name="apple-mobile-web-app-title" content="Beelzebub" />
@@ -853,6 +853,83 @@ function Row({ k, v, mono }) {
 }
 
 /* =========================================================================
+   INSTALL HINT — platform-aware: shows install state, an install button
+   on Chrome (Android/desktop) via beforeinstallprompt, or the iOS Safari
+   Share-sheet instructions.
+   ========================================================================= */
+function InstallHint() {
+  const [deferred, setDeferred] = useState(null);
+  const [installed, setInstalled] = useState(
+    typeof window !== 'undefined' && (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+    )
+  );
+
+  useEffect(() => {
+    const onPrompt = (e) => { e.preventDefault(); setDeferred(e); };
+    const onInstalled = () => { setInstalled(true); setDeferred(null); };
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+
+  if (installed) {
+    return <p className="text-sm">Installed — you can open the app from your home screen.</p>;
+  }
+
+  if (deferred) {
+    return (
+      <div className="space-y-2">
+        <button
+          onClick={async () => {
+            deferred.prompt();
+            await deferred.userChoice;
+            setDeferred(null);
+          }}
+          className="accent-bg text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
+          Install app
+        </button>
+        <p className="muted text-xs">Adds a home-screen icon and lets the app run offline.</p>
+      </div>
+    );
+  }
+
+  const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+  const isIOS = /iPhone|iPad|iPod/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  const isIOSOtherBrowser = /iPhone|iPad|iPod/.test(ua) && /CriOS|FxiOS|EdgiOS/.test(ua);
+
+  if (isIOS) {
+    return (
+      <p className="text-sm leading-6">
+        Tap <strong>Share</strong> (the square with the up arrow at the bottom of Safari),
+        scroll down, then tap <strong>Add to Home Screen</strong>.
+      </p>
+    );
+  }
+
+  if (isIOSOtherBrowser) {
+    return (
+      <p className="text-sm leading-6 muted">
+        On iOS, installation only works in <strong>Safari</strong>. Open this page in Safari,
+        then tap Share &rarr; Add to Home Screen.
+      </p>
+    );
+  }
+
+  return (
+    <p className="text-sm leading-6 muted">
+      In Chrome on Android, open the three-dot menu and tap <strong>Install app</strong>.
+      On desktop, look for the install icon at the right edge of the address bar.
+    </p>
+  );
+}
+
+/* =========================================================================
    SETTINGS
    ========================================================================= */
 function Settings({ theme, setTheme, font, setFont, fontSize, setFontSize, favCount, manifest }) {
@@ -884,6 +961,10 @@ function Settings({ theme, setTheme, font, setFont, fontSize, setFontSize, favCo
 
       <Section title="Personal library">
         <p className="muted text-sm">Favorited chapters: {favCount}</p>
+      </Section>
+
+      <Section title="Install">
+        <InstallHint />
       </Section>
 
       <Section title="About">

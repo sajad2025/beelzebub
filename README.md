@@ -34,7 +34,7 @@ scholars — who wants to work with *Beelzebub's Tales* in a programmable form.
 
 | You are a… | Start here |
 |---|---|
-| 📖 **Reader** | [Open the app](https://sajad2025.github.io/beelzebub/), tap Share → Add to Home Screen |
+| 📖 **Reader** | [Open the app](https://sajad2025.github.io/beelzebub/) — install via Chrome (Android/desktop: three-dot menu → *Install app*) or Safari (iOS: Share → *Add to Home Screen*) |
 | 💻 **Developer** | [`/data`](./data) — per-chapter JSON; [`schema/`](./schema) — JSON Schema |
 | 🎓 **Researcher** | Anchored paragraphs cross-reference the printed page; [`MANIFEST.json`](./MANIFEST.json) ships counts + provenance |
 | ✍️ **Contributor** | Open an issue or PR — anything from data corrections to reader polish |
@@ -58,8 +58,12 @@ scholars — who wants to work with *Beelzebub's Tales* in a programmable form.
   text query
 - **Frozen schema v1** with JSON Schema validation built into the manifest step
 
-Out of v0.2 (planned for v0.3): service worker (true offline), PWA icons,
-SQLite + Parquet dumps with DOI, audio recitations.
+- **Installable PWA** — manifest with maskable icons, service worker that
+  precaches the shell and lazy-caches chapter JSON, so the app loads instantly
+  and works fully offline after first visit
+
+Out of v0.2 (planned for v0.3): SQLite + Parquet dumps with DOI,
+audio recitations.
 
 ---
 
