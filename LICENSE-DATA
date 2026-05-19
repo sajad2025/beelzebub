@@ -1,0 +1,59 @@
+# Data licensing — Beelzebub's Tales
+
+This file applies to the extracted text in `data/` and the source PDF
+`Beelzebubs_Tales.pdf`. It does **not** apply to the scripts or schema in this
+repository, which are MIT-licensed (see `LICENSE`).
+
+## The underlying text
+
+*Beelzebub's Tales to His Grandson* (All and Everything, First Series) was
+written by **G. I. Gurdjieff** (1866–1949) and first published in 1950 by
+Routledge & Kegan Paul.
+
+Gurdjieff died on 29 October 1949. Under the life-of-author-plus-70-years
+copyright regime (EU, UK, and most Berne-Convention signatories), his works
+entered the public domain on **1 January 2020**. The English text of
+*Beelzebub's Tales* is therefore in the public domain in those jurisdictions.
+
+In the United States, public-domain status for non-US-author works is more
+complex; this work appears to have entered US public domain through normal
+expiry of copyright on works first published outside the US under the rules
+applicable to its publication date.
+
+## The typesetting / edition
+
+The source PDF (`Beelzebubs_Tales.pdf`, MD5/SHA-256 in `MANIFEST.json`) was
+produced in 2019 by *joshuatilton* using the Vellum publishing tool (visible
+in the PDF metadata). It is a re-typesetting of the original English text.
+
+The text content of that edition is the underlying public-domain text. The
+specific page numbering, paragraph anchors (`1.4`, `1.5-6`, ...), and visual
+design of that edition are the original work of the typesetter. The
+**anchors** are reused in this repository as a citation system: they are short
+factual references to page numbers in a published edition, which is a
+non-substantial part of the typesetter's creative contribution.
+
+## What this repository republishes
+
+- The full English text, in plain JSON, with paragraph-level anchors that
+  refer back to the page numbering of the joshuatilton 2019 edition.
+- Per-chapter structuring (chapter number + title) that matches the original
+  Gurdjieff manuscript and all subsequent editions.
+- The source PDF itself, retained verbatim for reproducibility.
+
+If you redistribute the JSON data downstream, please include a citation to
+either the original Gurdjieff work or this repository (or both):
+
+> *Beelzebub's Tales to His Grandson*, by G. I. Gurdjieff (1950). Text in the
+> public domain. Machine-readable JSON edition via
+> `github.com/sajad2025/beelzebub`, anchored to the joshuatilton/Vellum 2019
+> typesetting.
+
+## A note on Gurdjieff's intent
+
+Gurdjieff's preface to this book ("Friendly Advice") explicitly invites
+readers to read each passage three times, the third time trying to "fathom
+the gist." This repository tries to honor that intent by preserving paragraph
+boundaries and the printed anchors exactly, so any future reader app can
+present the book as it was meant to be read rather than as a flat blob of
+text.

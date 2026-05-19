@@ -1,0 +1,14 @@
+{
+  "name": "Beelzebub's Tales",
+  "short_name": "Beelzebub",
+  "description": "A clean, citable edition of G. I. Gurdjieff's Beelzebub's Tales to His Grandson.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf6ef",
+  "theme_color": "#3a2a16",
+  "orientation": "any",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["books", "education", "lifestyle"]
+}

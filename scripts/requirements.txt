@@ -1,0 +1,4 @@
+# Extraction relies on the system-installed `pdftotext` (poppler-utils).
+# We use it via subprocess to avoid a heavyweight Python PDF dependency.
+# These pins are only for the optional JSON-schema validation step.
+jsonschema==4.23.0

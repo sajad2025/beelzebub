@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.eggs/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Build artifacts that the extractor produces locally
+# (commit the extracted data/ JSON — that's the product)
+/tmp/
+*.tmp
+*.log

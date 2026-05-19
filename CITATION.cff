@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+title: "Beelzebub's Tales: A Citable Edition of Gurdjieff's All and Everything First Series"
+abstract: >-
+  A schema-documented, MIT-licensed republication of G. I. Gurdjieff's
+  *Beelzebub's Tales to His Grandson* (1950), with paragraph-level anchors
+  preserved from the joshuatilton/Vellum 2019 typesetting, and a reference
+  Progressive Web App reader. The underlying English text is in the public
+  domain; this project provides programmable infrastructure for citation,
+  cross-reference, and downstream reuse.
+type: dataset
+authors:
+  - alias: sajad2025
+    affiliation: "Independent"
+repository-code: "https://github.com/sajad2025/beelzebub"
+url: "https://sajad2025.github.io/beelzebub/"
+keywords:
+  - gurdjieff
+  - beelzebub's tales
+  - all and everything
+  - esoteric literature
+  - digital humanities
+  - cultural heritage
+  - public domain
+license: MIT
+license-url: "https://opensource.org/licenses/MIT"
+version: "0.2.0"
+date-released: "2026-05-18"
+references:
+  - type: book
+    title: "Beelzebub's Tales to His Grandson (All and Everything, First Series)"
+    authors:
+      - family-names: Gurdjieff
+        given-names: G. I.
+    year: 1950
+    publisher:
+      name: "Routledge & Kegan Paul"
+    notes: >-
+      Primary text. The English first edition entered the public domain in
+      life+70 jurisdictions in 2020. This project republishes the underlying
+      text via a 2019 retypeset PDF whose page anchors are preserved as a
+      citation system.

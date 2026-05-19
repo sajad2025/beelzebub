@@ -1,0 +1,410 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "local-20260519T010741Z",
+  "generated_at": "2026-05-19T01:07:41.335079+00:00",
+  "repository": "",
+  "git_sha": "",
+  "source": {
+    "pdf": "Beelzebubs_Tales.pdf",
+    "pdf_sha256": "07a485ba109a1caf664083020ede051c6894099af7276a29bc8e9ada56d3d8bc",
+    "edition": "joshuatilton typesetting via Vellum (2019), original text G. I. Gurdjieff, All and Everything First Series, 1950."
+  },
+  "license": {
+    "code": "MIT",
+    "data": "Public domain (text); typesetting attribution as above",
+    "attribution": "G. I. Gurdjieff, Beelzebub's Tales to His Grandson (All and Everything First Series). Text in the public domain. Typeset by joshuatilton via Vellum, 2019."
+  },
+  "counts": {
+    "chapters": 48,
+    "chapter_paragraphs": 6585,
+    "front_matter_paragraphs": 11,
+    "distinct_pages": 1238,
+    "data_files": 49
+  },
+  "chapters": [
+    {
+      "number": 1,
+      "title": "The Arousing of Thought",
+      "page_start": 1,
+      "page_end": 50,
+      "paragraphs": 221,
+      "file": "data/ch01.json"
+    },
+    {
+      "number": 2,
+      "title": "Introduction: Why Beelzebub Was in Our Solar System",
+      "page_start": 51,
+      "page_end": 55,
+      "paragraphs": 33,
+      "file": "data/ch02.json"
+    },
+    {
+      "number": 3,
+      "title": "The Cause of the Delay in the Falling of the Ship Karnak",
+      "page_start": 56,
+      "page_end": 65,
+      "paragraphs": 72,
+      "file": "data/ch03.json"
+    },
+    {
+      "number": 4,
+      "title": "The Law of Falling",
+      "page_start": 66,
+      "page_end": 69,
+      "paragraphs": 26,
+      "file": "data/ch04.json"
+    },
+    {
+      "number": 5,
+      "title": "The System of Archangel Hariton",
+      "page_start": 70,
+      "page_end": 72,
+      "paragraphs": 14,
+      "file": "data/ch05.json"
+    },
+    {
+      "number": 6,
+      "title": "Perpetual Motion",
+      "page_start": 73,
+      "page_end": 75,
+      "paragraphs": 22,
+      "file": "data/ch06.json"
+    },
+    {
+      "number": 7,
+      "title": "Becoming Aware of Genuine Being-duty",
+      "page_start": 76,
+      "page_end": 78,
+      "paragraphs": 21,
+      "file": "data/ch07.json"
+    },
+    {
+      "number": 8,
+      "title": "The Impudent Brat Hassein, Beelzebub’s Grandson, Dares to Call Men “slugs”",
+      "page_start": 79,
+      "page_end": 80,
+      "paragraphs": 16,
+      "file": "data/ch08.json"
+    },
+    {
+      "number": 9,
+      "title": "The Cause of the Genesis of the Moon",
+      "page_start": 81,
+      "page_end": 86,
+      "paragraphs": 34,
+      "file": "data/ch09.json"
+    },
+    {
+      "number": 10,
+      "title": "Why “men” Are Not Men",
+      "page_start": 87,
+      "page_end": 93,
+      "paragraphs": 39,
+      "file": "data/ch10.json"
+    },
+    {
+      "number": 11,
+      "title": "A Piquant Trait of the Peculiar Psyche of Contemporary Man",
+      "page_start": 94,
+      "page_end": 97,
+      "paragraphs": 24,
+      "file": "data/ch11.json"
+    },
+    {
+      "number": 12,
+      "title": "The First “growl”",
+      "page_start": 98,
+      "page_end": 102,
+      "paragraphs": 37,
+      "file": "data/ch12.json"
+    },
+    {
+      "number": 13,
+      "title": "Why in Man’s Reason Fantasy May Be Perceived as Reality",
+      "page_start": 103,
+      "page_end": 105,
+      "paragraphs": 18,
+      "file": "data/ch13.json"
+    },
+    {
+      "number": 14,
+      "title": "The Beginnings of Perspectives Promising Nothing Very Cheerful",
+      "page_start": 106,
+      "page_end": 108,
+      "paragraphs": 15,
+      "file": "data/ch14.json"
+    },
+    {
+      "number": 15,
+      "title": "The First Descent of Beelzebub Upon the Planet Earth",
+      "page_start": 109,
+      "page_end": 120,
+      "paragraphs": 79,
+      "file": "data/ch15.json"
+    },
+    {
+      "number": 16,
+      "title": "The Relative Understanding of Time",
+      "page_start": 121,
+      "page_end": 133,
+      "paragraphs": 71,
+      "file": "data/ch16.json"
+    },
+    {
+      "number": 17,
+      "title": "The Arch-absurd According to the Assertion of Beelzebub, Our Sun Neither Lights Nor Heats",
+      "page_start": 134,
+      "page_end": 148,
+      "paragraphs": 66,
+      "file": "data/ch17.json"
+    },
+    {
+      "number": 18,
+      "title": "The Arch-preposterous",
+      "page_start": 149,
+      "page_end": 176,
+      "paragraphs": 143,
+      "file": "data/ch18.json"
+    },
+    {
+      "number": 19,
+      "title": "Beelzebub’s Tales About His Second Descent Onto the Planet Earth",
+      "page_start": 177,
+      "page_end": 206,
+      "paragraphs": 146,
+      "file": "data/ch19.json"
+    },
+    {
+      "number": 20,
+      "title": "The Third Flight of Beelzebub to the Planet Earth",
+      "page_start": 207,
+      "page_end": 226,
+      "paragraphs": 104,
+      "file": "data/ch20.json"
+    },
+    {
+      "number": 21,
+      "title": "The First Visit of Beelzebub to India",
+      "page_start": 227,
+      "page_end": 251,
+      "paragraphs": 120,
+      "file": "data/ch21.json"
+    },
+    {
+      "number": 22,
+      "title": "Beelzebub for the First Time in Tibet",
+      "page_start": 252,
+      "page_end": 267,
+      "paragraphs": 58,
+      "file": "data/ch22.json"
+    },
+    {
+      "number": 23,
+      "title": "The Fourth Personal Sojourn of Beelzebub on the Planet Earth",
+      "page_start": 268,
+      "page_end": 314,
+      "paragraphs": 206,
+      "file": "data/ch23.json"
+    },
+    {
+      "number": 24,
+      "title": "Beelzebub’s Flight to the Planet Earth for the Fifth Time",
+      "page_start": 315,
+      "page_end": 346,
+      "paragraphs": 198,
+      "file": "data/ch24.json"
+    },
+    {
+      "number": 25,
+      "title": "The Very Saintly Ashiata Shiemash, Sent from Above to the Earth",
+      "page_start": 347,
+      "page_end": 352,
+      "paragraphs": 33,
+      "file": "data/ch25.json"
+    },
+    {
+      "number": 26,
+      "title": "The Legominism Concerning the Deliberations of the Very Saintly Ashiata Shiemash Under the Title",
+      "page_start": 353,
+      "page_end": 365,
+      "paragraphs": 59,
+      "file": "data/ch26.json"
+    },
+    {
+      "number": 27,
+      "title": "The Organization for Man’s Existence Created by the Very Saintly Ashiata Shiemash",
+      "page_start": 366,
+      "page_end": 389,
+      "paragraphs": 104,
+      "file": "data/ch27.json"
+    },
+    {
+      "number": 28,
+      "title": "The Chief Culprit in the Destruction of All the Very Saintly Labors of Ashiata",
+      "page_start": 390,
+      "page_end": 410,
+      "paragraphs": 115,
+      "file": "data/ch28.json"
+    },
+    {
+      "number": 29,
+      "title": "The Fruits of Former Civilizations and the Blossoms of the Contemporary",
+      "page_start": 411,
+      "page_end": 448,
+      "paragraphs": 177,
+      "file": "data/ch29.json"
+    },
+    {
+      "number": 30,
+      "title": "Art",
+      "page_start": 449,
+      "page_end": 523,
+      "paragraphs": 381,
+      "file": "data/ch30.json"
+    },
+    {
+      "number": 31,
+      "title": "The Sixth and Last Sojourn of Beelzebub on the Planet Earth",
+      "page_start": 524,
+      "page_end": 557,
+      "paragraphs": 211,
+      "file": "data/ch31.json"
+    },
+    {
+      "number": 32,
+      "title": "Hypnotism",
+      "page_start": 558,
+      "page_end": 578,
+      "paragraphs": 110,
+      "file": "data/ch32.json"
+    },
+    {
+      "number": 33,
+      "title": "Beelzebub as Professional Hypnotist",
+      "page_start": 579,
+      "page_end": 590,
+      "paragraphs": 64,
+      "file": "data/ch33.json"
+    },
+    {
+      "number": 34,
+      "title": "Russia",
+      "page_start": 591,
+      "page_end": 656,
+      "paragraphs": 328,
+      "file": "data/ch34.json"
+    },
+    {
+      "number": 35,
+      "title": "A Change in the Appointed Course of the Falling of the Transspace Ship Karnak",
+      "page_start": 657,
+      "page_end": 659,
+      "paragraphs": 14,
+      "file": "data/ch35.json"
+    },
+    {
+      "number": 36,
+      "title": "Just a Wee Bit More About the Germans",
+      "page_start": 660,
+      "page_end": 662,
+      "paragraphs": 10,
+      "file": "data/ch36.json"
+    },
+    {
+      "number": 37,
+      "title": "France",
+      "page_start": 663,
+      "page_end": 693,
+      "paragraphs": 192,
+      "file": "data/ch37.json"
+    },
+    {
+      "number": 38,
+      "title": "Religion",
+      "page_start": 694,
+      "page_end": 743,
+      "paragraphs": 252,
+      "file": "data/ch38.json"
+    },
+    {
+      "number": 39,
+      "title": "The Holy Planet “purgatory”",
+      "page_start": 744,
+      "page_end": 810,
+      "paragraphs": 296,
+      "file": "data/ch39.json"
+    },
+    {
+      "number": 40,
+      "title": "Beelzebub Tells How People Learned and Again Forgot About the Fundamental Cosmic Law Of",
+      "page_start": 811,
+      "page_end": 870,
+      "paragraphs": 238,
+      "file": "data/ch40.json"
+    },
+    {
+      "number": 41,
+      "title": "The Bokharian Dervish Hadji- Asvatz-troov",
+      "page_start": 871,
+      "page_end": 917,
+      "paragraphs": 359,
+      "file": "data/ch41.json"
+    },
+    {
+      "number": 42,
+      "title": "Beelzebub in America",
+      "page_start": 918,
+      "page_end": 1054,
+      "paragraphs": 812,
+      "file": "data/ch42.json"
+    },
+    {
+      "number": 43,
+      "title": "Beelzebub’s Survey of the Process of the Periodic Reciprocal Destruction of Men, Or",
+      "page_start": 1055,
+      "page_end": 1118,
+      "paragraphs": 378,
+      "file": "data/ch43.json"
+    },
+    {
+      "number": 44,
+      "title": "In the Opinion of Beelzebub, Man’s Understanding of Justice Is for Him in the Objective Sense An",
+      "page_start": 1119,
+      "page_end": 1144,
+      "paragraphs": 140,
+      "file": "data/ch44.json"
+    },
+    {
+      "number": 45,
+      "title": "In the Opinion of Beelzebub, Man’s Extraction of Electricity from Nature and Its Destruction",
+      "page_start": 1145,
+      "page_end": 1160,
+      "paragraphs": 93,
+      "file": "data/ch45.json"
+    },
+    {
+      "number": 46,
+      "title": "Beelzebub Explains to His Grandson the Significance of the Form and Sequence Which He",
+      "page_start": 1161,
+      "page_end": 1172,
+      "paragraphs": 58,
+      "file": "data/ch46.json"
+    },
+    {
+      "number": 47,
+      "title": "The Inevitable Result of Impartial Mentation",
+      "page_start": 1173,
+      "page_end": 1183,
+      "paragraphs": 77,
+      "file": "data/ch47.json"
+    },
+    {
+      "number": 48,
+      "title": "From the Author",
+      "page_start": 1184,
+      "page_end": 1238,
+      "paragraphs": 301,
+      "file": "data/ch48.json"
+    }
+  ]
+}
