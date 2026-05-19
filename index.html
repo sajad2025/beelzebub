@@ -221,11 +221,15 @@ const FONTS = [
   { id: 'crimson', label: 'Crimson Pro', stack: "'Crimson Pro', Georgia, serif" },
   { id: 'lora',    label: 'Lora',        stack: "'Lora', Georgia, serif" },
 ];
+// Root font-size: Tailwind's text-* utilities and the .anchor-tag/.prose-col
+// rules all use rem, so scaling <html> font-size scales the whole UI at once.
+// Chosen so chapter body (rendered as text-lg = 1.125rem) lands at ~16/18/20/24
+// — close to the previous absolute pixel sizes.
 const FONT_SIZES = [
-  { id: 'sm', label: 'Small',   cls: 'text-base',  px: 16 },
-  { id: 'md', label: 'Medium',  cls: 'text-lg',    px: 18 },
-  { id: 'lg', label: 'Large',   cls: 'text-xl',    px: 20 },
-  { id: 'xl', label: 'X-Large', cls: 'text-2xl',   px: 24 },
+  { id: 'sm', label: 'Small',   rootPx: 14 },
+  { id: 'md', label: 'Medium',  rootPx: 16 },
+  { id: 'lg', label: 'Large',   rootPx: 18 },
+  { id: 'xl', label: 'X-Large', rootPx: 21 },
 ];
 
 /* =========================================================================
@@ -247,11 +251,15 @@ function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // Apply theme + font to body
+  // Apply theme + font to body, font-size to <html> (so rem-based UI scales)
   useEffect(() => {
     document.body.className = `theme-${theme}`;
     document.body.style.fontFamily = FONTS.find(f => f.id === font).stack;
   }, [theme, font]);
+  useEffect(() => {
+    const cfg = FONT_SIZES.find(s => s.id === fontSize);
+    document.documentElement.style.fontSize = cfg ? `${cfg.rootPx}px` : '';
+  }, [fontSize]);
 
   // Persist preferences
   useEffect(() => { LS.set('beel:theme', theme); }, [theme]);
@@ -307,7 +315,6 @@ function App() {
             chapterNum={route.chapter}
             anchor={route.anchor}
             manifest={manifest}
-            fontSize={fontSize}
             isFav={favorites.has(route.chapter)}
             onFav={() => toggleFav(route.chapter)}
             go={go}
@@ -656,10 +663,9 @@ function renderPreview(text, q) {
 /* =========================================================================
    READER — chapter detail with margin anchors, anchor-jump, prev/next
    ========================================================================= */
-function Reader({ chapterNum, anchor, manifest, fontSize, isFav, onFav, go }) {
+function Reader({ chapterNum, anchor, manifest, isFav, onFav, go }) {
   const [doc, setDoc] = useState(null);
   const [err, setErr] = useState(null);
-  const sizeCls = FONT_SIZES.find(s => s.id === fontSize).cls;
   const bodyRef = useRef(null);
 
   useEffect(() => {
@@ -739,7 +745,7 @@ function Reader({ chapterNum, anchor, manifest, fontSize, isFav, onFav, go }) {
               className="anchor-tag"
               title={`Cite: ${p.anchor}`}
             >{p.anchor}</a>
-            <span className={`body block ${sizeCls}`}>
+            <span className="body block text-lg">
               {p.text}
             </span>
           </div>
