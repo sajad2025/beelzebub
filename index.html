@@ -96,9 +96,12 @@
   /* Chapter ornament */
   .ornament { text-align: center; letter-spacing: 0.6em; opacity: 0.35; user-select: none; }
 
-  /* Safe-area helpers for iOS */
-  .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
-  .pt-safe { padding-top: max(env(safe-area-inset-top), 0.5rem); }
+  /* Safe-area helpers for iOS.
+     !important is needed because Tailwind's CDN stylesheet loads after this
+     block, so without it `py-3` (padding-top:0.75rem) would override pt-safe
+     and the iPhone status bar would overlap the header on installed PWAs. */
+  .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem) !important; }
+  .pt-safe { padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem) !important; }
 
   .fade-in { animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
