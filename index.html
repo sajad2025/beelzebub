@@ -313,7 +313,7 @@ function App() {
             go={go}
           />
         ) : route.tab === 'home' ? (
-          <Browse manifest={manifest} go={go} />
+          <Browse manifest={manifest} favorites={favorites} go={go} />
         ) : route.tab === 'search' ? (
           <Search manifest={manifest} go={go} />
         ) : (
@@ -350,7 +350,7 @@ function TopBar({ tab, onSearch, onSettings }) {
 /* =========================================================================
    BROWSE — landing page: book title + random + chapter list
    ========================================================================= */
-function Browse({ manifest, go }) {
+function Browse({ manifest, favorites, go }) {
   const [q, setQ] = useState('');
   const filtered = useMemo(() => {
     const n = q.trim().toLowerCase();
@@ -365,6 +365,13 @@ function Browse({ manifest, go }) {
     go({ tab: 'reader', chapter: n });
   };
 
+  const favChapters = useMemo(() => {
+    return Array.from(favorites)
+      .map(n => manifest.chapters.find(c => c.number === n))
+      .filter(Boolean)
+      .sort((a, b) => a.number - b.number);
+  }, [favorites, manifest]);
+
   return (
     <div className="fade-in">
       <section className="px-5 pt-6 pb-2">
@@ -372,6 +379,24 @@ function Browse({ manifest, go }) {
         <h2 className="text-2xl font-semibold mt-1 leading-tight">Beelzebub's Tales to His Grandson</h2>
         <p className="muted text-sm mt-1">G. I. Gurdjieff · 1950</p>
       </section>
+
+      {favChapters.length > 0 && (
+        <section className="mt-4 px-4">
+          <p className="muted text-xs uppercase tracking-widest mb-2 px-1">Favorites</p>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1">
+            {favChapters.map(c => (
+              <button
+                key={c.number}
+                onClick={() => go({ tab: 'reader', chapter: c.number })}
+                className="shrink-0 w-44 surface border border-soft rounded-xl px-3 py-2.5 text-start active:opacity-70"
+              >
+                <span className="accent text-[11px] font-mono uppercase tracking-widest block">★ Ch {c.number}</span>
+                <span className="block text-sm font-semibold leading-snug mt-1 line-clamp-2">{c.title}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="px-4 mt-3">
         <button
