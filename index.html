@@ -170,16 +170,27 @@ const LS = {
    ========================================================================= */
 function isAnchorQuery(s) {
   const t = (s || '').trim();
-  return t.length > 0 && /^[\d.\-]+$/.test(t);
+  // Pure numeric anchors (chapters) plus front-matter anchors (fa, fa.1, fa.11).
+  return t.length > 0 && (/^[\d.\-]+$/.test(t) || /^fa[\d.\-]*$/i.test(t));
 }
 
 /* =========================================================================
    DATA LAYER — fetch manifest + chapters on demand, cache in memory
    ========================================================================= */
 const DATA_DIR = 'data/';
-const chapterCache = new Map();   // number -> chapter JSON
+// Chapter 0 is the "Friendly Advice" preface — stored separately in
+// data/front-matter.json but addressed through the same loader/cache so
+// the rest of the app (Reader, Search, prev/next) can treat it uniformly.
+const FRONT_MATTER_NUM = 0;
+const FRONT_MATTER_URL = `${DATA_DIR}front-matter.json`;
+const chapterCache = new Map();   // number -> chapter JSON (0 = front matter)
 let manifestCache = null;
 
+function chapterUrl(n) {
+  return n === FRONT_MATTER_NUM
+    ? FRONT_MATTER_URL
+    : `${DATA_DIR}ch${String(n).padStart(2, '0')}.json`;
+}
 async function loadManifest() {
   if (manifestCache) return manifestCache;
   const r = await fetch('MANIFEST.json');
@@ -189,8 +200,7 @@ async function loadManifest() {
 }
 async function loadChapter(n) {
   if (chapterCache.has(n)) return chapterCache.get(n);
-  const path = `${DATA_DIR}ch${String(n).padStart(2, '0')}.json`;
-  const r = await fetch(path);
+  const r = await fetch(chapterUrl(n));
   if (!r.ok) throw new Error(`chapter ${n} fetch failed: ` + r.status);
   const doc = await r.json();
   chapterCache.set(n, doc);
@@ -393,7 +403,17 @@ function Browse({ manifest, favorites, go }) {
         </section>
       )}
 
-      <section className="px-4 mt-3">
+      <section className="px-4 mt-3 space-y-2">
+        <button
+          onClick={() => go({ tab: 'reader', chapter: FRONT_MATTER_NUM })}
+          className="w-full surface border border-soft rounded-2xl px-4 py-3 text-start active:opacity-80 transition flex items-center gap-3"
+        >
+          <span className="text-2xl accent">✎</span>
+          <span className="flex-1">
+            <span className="accent text-xs font-semibold uppercase tracking-widest block">Friendly Advice</span>
+            <span className="muted text-xs block mt-0.5">The author's preface — read each passage thrice.</span>
+          </span>
+        </button>
         <button
           onClick={random}
           className="w-full surface border border-soft rounded-2xl px-4 py-3 text-start active:opacity-80 transition flex items-center gap-3"
@@ -449,9 +469,17 @@ function Search({ manifest, go }) {
   const trimmed = q.trim();
   const isAnchor = useMemo(() => isAnchorQuery(trimmed), [trimmed]);
 
-  // Both anchor and text searches need every chapter loaded — anchors live
-  // inside the per-chapter JSON, not the manifest.
-  const [allLoaded, setAllLoaded] = useState(chapterCache.size >= 48);
+  // Front matter is searchable too — it carries fa.1..fa.11 anchors and the
+  // author's preface, both citable.
+  const searchUniverse = useMemo(() => [
+    { number: FRONT_MATTER_NUM, title: 'Friendly Advice' },
+    ...manifest.chapters,
+  ], [manifest]);
+
+  // Both anchor and text searches need every section loaded — anchors live
+  // inside the per-section JSON, not the manifest.
+  const TOTAL = searchUniverse.length;
+  const [allLoaded, setAllLoaded] = useState(chapterCache.size >= TOTAL);
   const [prefetchProgress, setPrefetchProgress] = useState(chapterCache.size);
   useEffect(() => {
     if (allLoaded) return;
@@ -459,7 +487,7 @@ function Search({ manifest, go }) {
     if (!wantsAll) return;
     let cancelled = false;
     (async () => {
-      const missing = manifest.chapters
+      const missing = searchUniverse
         .map(c => c.number)
         .filter(n => !chapterCache.has(n));
       for (const n of missing) {
@@ -471,14 +499,14 @@ function Search({ manifest, go }) {
       setAllLoaded(true);
     })();
     return () => { cancelled = true; };
-  }, [trimmed, isAnchor, allLoaded, manifest]);
+  }, [trimmed, isAnchor, allLoaded, searchUniverse, TOTAL]);
 
   // Anchor substring search — like PDF text search but scoped to anchors.
   const ANCHOR_CAP = 200;
   const anchorResults = useMemo(() => {
     if (!isAnchor) return [];
     const out = [];
-    for (const ch of manifest.chapters) {
+    for (const ch of searchUniverse) {
       const doc = chapterCache.get(ch.number);
       if (!doc) continue;
       for (const p of doc.paragraphs) {
@@ -494,15 +522,15 @@ function Search({ manifest, go }) {
       }
     }
     return out;
-  }, [trimmed, isAnchor, manifest, allLoaded, prefetchProgress]);
+  }, [trimmed, isAnchor, searchUniverse, allLoaded, prefetchProgress]);
 
-  // Full-text search across loaded chapters (non-numeric queries only)
+  // Full-text search across loaded sections (non-numeric queries only)
   const textResults = useMemo(() => {
     if (isAnchor) return [];
     const needle = trimmed.toLowerCase();
     if (needle.length < 3) return [];
     const out = [];
-    for (const ch of manifest.chapters) {
+    for (const ch of searchUniverse) {
       const doc = chapterCache.get(ch.number);
       if (!doc) continue;
       for (const p of doc.paragraphs) {
@@ -519,7 +547,7 @@ function Search({ manifest, go }) {
       }
     }
     return out;
-  }, [trimmed, isAnchor, manifest, allLoaded, prefetchProgress]);
+  }, [trimmed, isAnchor, searchUniverse, allLoaded, prefetchProgress]);
 
   return (
     <div className="fade-in">
@@ -541,7 +569,7 @@ function Search({ manifest, go }) {
           <div className="mt-4">
             {!allLoaded && (
               <p className="muted text-xs mb-2 px-1">
-                Indexing… {prefetchProgress}/48 chapters loaded.
+                Indexing… {prefetchProgress}/{TOTAL} sections loaded.
               </p>
             )}
             {anchorResults.length > 0 && (
@@ -581,7 +609,7 @@ function Search({ manifest, go }) {
           <div className="mt-4">
             {!allLoaded && (
               <p className="muted text-xs mb-2 px-1">
-                Indexing… {prefetchProgress}/48 chapters loaded.
+                Indexing… {prefetchProgress}/{TOTAL} sections loaded.
               </p>
             )}
             {textResults.length > 0 && (
@@ -617,7 +645,7 @@ function Search({ manifest, go }) {
             <div>
               <p className="muted text-xs uppercase tracking-widest mb-2 px-1">Anchor shortcuts</p>
               <div className="flex flex-wrap gap-2">
-                {['1.5', '744', '24.315', '48.1210-1'].map(a => (
+                {['fa.1', '1.5', '744', '24.315', '48.1210-1'].map(a => (
                   <button
                     key={a}
                     onClick={() => setQ(a)}
@@ -648,6 +676,8 @@ function Search({ manifest, go }) {
                 <span className="font-mono accent"> 744</span> finds every paragraph whose
                 anchor contains <span className="font-mono accent">744</span>, and
                 <span className="font-mono accent"> 39.744</span> narrows to that chapter.
+                The "Friendly Advice" preface uses
+                <span className="font-mono accent"> fa.1</span>…<span className="font-mono accent">fa.11</span>.
               </p>
             </div>
           </div>
@@ -740,28 +770,41 @@ function Reader({ chapterNum, anchor, manifest, isFav, onFav, go }) {
     );
   }
   if (!doc) {
+    const loadingIsFM = chapterNum === FRONT_MATTER_NUM;
     return (
       <div className="fade-in">
-        <ReaderHeader title="Loading…" go={go} chapter={chapterNum} isFav={false} onFav={() => {}} />
-        <div className="p-6 muted text-center">Loading chapter {chapterNum}…</div>
+        <ReaderHeader title="Loading…" go={go} chapter={chapterNum} isFM={loadingIsFM} isFav={false} onFav={() => {}} />
+        <div className="p-6 muted text-center">
+          {loadingIsFM ? 'Loading front matter…' : `Loading chapter ${chapterNum}…`}
+        </div>
       </div>
     );
   }
 
-  const prev = chapterNum > 1 ? manifest.chapters.find(c => c.number === chapterNum - 1) : null;
-  const next = chapterNum < 48 ? manifest.chapters.find(c => c.number === chapterNum + 1) : null;
+  const isFM = doc.kind === 'front_matter';
+  const prev = isFM
+    ? null
+    : chapterNum === 1
+      ? { number: FRONT_MATTER_NUM, title: 'Friendly Advice', isFM: true }
+      : manifest.chapters.find(c => c.number === chapterNum - 1) || null;
+  const next = isFM
+    ? manifest.chapters.find(c => c.number === 1)
+    : chapterNum < 48 ? manifest.chapters.find(c => c.number === chapterNum + 1) : null;
 
   return (
     <div className="fade-in pb-12">
       <ReaderHeader
         title={doc.title}
         chapter={chapterNum}
+        isFM={isFM}
         go={go}
         isFav={isFav}
         onFav={onFav}
       />
       <article className="prose-col px-4 sm:px-8 py-8" ref={bodyRef}>
-        <p className="muted text-xs uppercase tracking-widest text-center">Chapter {doc.number}</p>
+        <p className="muted text-xs uppercase tracking-widest text-center">
+          {isFM ? 'Front matter' : `Chapter ${doc.number}`}
+        </p>
         <h2 className="text-3xl font-semibold text-center mt-2 leading-tight">{doc.title}</h2>
         <div className="ornament my-7">⁂</div>
 
@@ -791,7 +834,7 @@ function Reader({ chapterNum, anchor, manifest, isFav, onFav, go }) {
               onClick={() => go({ tab: 'reader', chapter: prev.number })}
               className="flex-1 surface border border-soft rounded-xl px-4 py-3 text-start active:opacity-70"
             >
-              <span className="muted text-xs block">← Chapter {prev.number}</span>
+              <span className="muted text-xs block">← {prev.isFM ? 'Front matter' : `Chapter ${prev.number}`}</span>
               <span className="text-sm font-semibold block mt-0.5">{prev.title}</span>
             </button>
           ) : <span className="flex-1" />}
@@ -808,8 +851,8 @@ function Reader({ chapterNum, anchor, manifest, isFav, onFav, go }) {
 
         {/* Metadata card */}
         <div className="surface-2 rounded-xl p-4 mt-6 text-sm space-y-2">
-          <Row k="Chapter"  v={`${doc.number} of 48`} />
-          <Row k="Pages"    v={`${doc.page_start}–${doc.page_end}`} />
+          <Row k={isFM ? 'Section' : 'Chapter'} v={isFM ? 'Front matter (preface)' : `${doc.number} of 48`} />
+          {!isFM && <Row k="Pages" v={`${doc.page_start}–${doc.page_end}`} />}
           <Row k="Paragraphs" v={doc.paragraphs.length.toLocaleString()} />
           <Row k="Permalink" v={`#/ch/${doc.number}`} mono />
           <Row k="URN"       v={doc.urn} mono />
@@ -819,7 +862,7 @@ function Reader({ chapterNum, anchor, manifest, isFav, onFav, go }) {
   );
 }
 
-function ReaderHeader({ title, chapter, go, isFav, onFav }) {
+function ReaderHeader({ title, chapter, isFM, go, isFav, onFav }) {
   return (
     <header className="px-4 py-3 flex items-center justify-between border-b border-soft surface sticky top-0 z-10 pt-safe">
       <button
@@ -831,14 +874,18 @@ function ReaderHeader({ title, chapter, go, isFav, onFav }) {
         className="text-2xl active:opacity-50"
       >←</button>
       <div className="text-center flex-1 mx-3 truncate">
-        <p className="text-xs muted">Chapter {chapter}</p>
+        <p className="text-xs muted">{isFM ? 'Front matter' : `Chapter ${chapter}`}</p>
         <p className="text-sm font-semibold truncate">{title}</p>
       </div>
-      <button
-        onClick={onFav}
-        aria-label="Favorite"
-        className="text-2xl active:opacity-50"
-      >{isFav ? '★' : '☆'}</button>
+      {isFM ? (
+        <span className="w-8" aria-hidden="true" />
+      ) : (
+        <button
+          onClick={onFav}
+          aria-label="Favorite"
+          className="text-2xl active:opacity-50"
+        >{isFav ? '★' : '☆'}</button>
+      )}
     </header>
   );
 }
@@ -930,6 +977,151 @@ function InstallHint() {
 }
 
 /* =========================================================================
+   OFFLINE CACHE — one tap pulls the whole book through fetch(); the service
+   worker's fetch handler caches each response, so the entire text becomes
+   available offline without a per-chapter visit.
+
+   Source of truth for "is this offline?" is the Cache Storage API itself
+   (not a localStorage flag), so a SW version bump that wipes the cache is
+   detected on next mount instead of lying "done" forever.
+   ========================================================================= */
+function OfflineCache({ manifest }) {
+  // 1 manifest + 1 front matter + 48 chapters = 50 items.
+  // Each item carries an explicit chapter number (or 'manifest' tag) so we
+  // can populate the in-memory caches AFTER going through the SW. We can't
+  // reuse loadManifest/loadChapter directly because they short-circuit on
+  // the JS cache — and a chapter loaded before the SW activated would never
+  // get into the HTTP cache that way.
+  const items = useMemo(() => [
+    { key: 'manifest', url: 'MANIFEST.json' },
+    { key: 'fm',       url: FRONT_MATTER_URL, chapterNum: FRONT_MATTER_NUM },
+    ...manifest.chapters.map(c => ({
+      key: `ch${c.number}`,
+      url: chapterUrl(c.number),
+      chapterNum: c.number,
+    })),
+  ], [manifest]);
+  const TOTAL = items.length;
+
+  async function downloadOne(item) {
+    const r = await fetch(item.url);
+    if (!r.ok) throw new Error(`${item.url}: ${r.status}`);
+    const doc = await r.json();
+    if (item.key === 'manifest') manifestCache = doc;
+    else if (typeof item.chapterNum === 'number') chapterCache.set(item.chapterNum, doc);
+  }
+
+  const [state, setState] = useState('checking');  // checking → idle | partial | done | downloading
+  const [present, setPresent] = useState(0);       // how many already in Cache Storage
+  const [progress, setProgress] = useState(0);     // counter during downloading
+  const [failed, setFailed] = useState(0);
+
+  // On mount, query Cache Storage directly. This is the ground truth — even
+  // survives "Clear site data" or a service-worker version bump.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (typeof caches === 'undefined') {
+        if (!cancelled) setState('idle');
+        return;
+      }
+      let n = 0;
+      for (const it of items) {
+        if (cancelled) return;
+        try { if (await caches.match(it.url)) n++; } catch {}
+      }
+      if (cancelled) return;
+      setPresent(n);
+      setState(n === TOTAL ? 'done' : n === 0 ? 'idle' : 'partial');
+    })();
+    return () => { cancelled = true; };
+  }, [items, TOTAL]);
+
+  async function downloadAll() {
+    setState('downloading');
+    setProgress(0);
+    setFailed(0);
+    const queue = items.slice();
+    let done = 0, bad = 0;
+    const CONCURRENCY = 4;
+    async function worker() {
+      while (queue.length) {
+        const it = queue.shift();
+        try { await downloadOne(it); }
+        catch { bad++; setFailed(bad); }
+        done++;
+        setProgress(done);
+      }
+    }
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    setPresent(done - bad);
+    setState(bad === 0 ? 'done' : 'partial');
+  }
+
+  if (state === 'checking') {
+    return <p className="muted text-sm">Checking offline status…</p>;
+  }
+
+  if (state === 'downloading') {
+    const pct = Math.round((progress / TOTAL) * 100);
+    return (
+      <div className="space-y-2">
+        <p className="text-sm">Downloading… {progress}/{TOTAL}</p>
+        <div className="h-1.5 surface-2 rounded overflow-hidden">
+          <div className="h-full accent-bg" style={{ width: `${pct}%`, transition: 'width 0.2s' }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (state === 'done') {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm">✓ Whole book saved — all 48 chapters + the preface work fully offline.</p>
+        <button onClick={downloadAll} className="muted text-xs underline active:opacity-60">
+          Re-download
+        </button>
+      </div>
+    );
+  }
+
+  // 'partial' — either user came in with some already cached (e.g. they
+  // visited a chapter before), or a download partially failed.
+  if (state === 'partial') {
+    const remaining = TOTAL - present;
+    return (
+      <div className="space-y-2">
+        <p className="text-sm">
+          {present}/{TOTAL} already saved.
+          {failed > 0 ? ` ${failed} failed last time — check your connection.` : ''}
+        </p>
+        <button
+          onClick={downloadAll}
+          className="accent-bg text-white px-4 py-2 rounded-lg text-sm font-medium"
+        >
+          {failed > 0 ? 'Retry' : `Save remaining ${remaining}`}
+        </button>
+      </div>
+    );
+  }
+
+  // 'idle'
+  return (
+    <div className="space-y-2">
+      <button
+        onClick={downloadAll}
+        className="accent-bg text-white px-4 py-2 rounded-lg text-sm font-medium"
+      >
+        Save the whole book for offline
+      </button>
+      <p className="muted text-xs">
+        Downloads all 48 chapters and the preface (~3 MB) so the book works fully offline. Also makes search instant.
+      </p>
+    </div>
+  );
+}
+
+/* =========================================================================
    SETTINGS
    ========================================================================= */
 function Settings({ theme, setTheme, font, setFont, fontSize, setFontSize, favCount, manifest }) {
@@ -965,6 +1157,10 @@ function Settings({ theme, setTheme, font, setFont, fontSize, setFontSize, favCo
 
       <Section title="Install">
         <InstallHint />
+      </Section>
+
+      <Section title="Offline">
+        <OfflineCache manifest={manifest} />
       </Section>
 
       <Section title="About">
