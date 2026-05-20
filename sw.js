@@ -1,4 +1,16 @@
-const CACHE = 'beelzebub-v3';
+// v4 — Network-first for the app shell (HTML + MANIFEST.json), cache-first
+// for everything else (chapter JSON, fonts, CDN libs, icons).
+//
+// Why: under cache-first-for-everything, iOS Safari (and any browser doing a
+// normal reload) would happily serve the stale cached index.html forever — a
+// hard-reload was the only way to ever see a new deploy. Network-first for
+// the shell means a refresh on any browser always pulls the latest app code
+// when online, while still falling back to the cached copy when offline.
+//
+// Chapter JSON / fonts / React / Tailwind stay cache-first because they're
+// effectively immutable: chapter anchors are pinned to the PDF SHA-256, and
+// CDN URLs are version-locked. Once cached they should never refetch.
+const CACHE = 'beelzebub-v4';
 
 const SHELL = [
   './',
@@ -10,10 +22,6 @@ const SHELL = [
   'apple-touch-icon-180.png',
 ];
 
-// Cross-origin runtime deps. Precached opaquely so the app keeps working
-// after the browser HTTP cache expires. Best-effort: a precache miss never
-// fails the install — the fetch handler will still cache on first network
-// fetch as a fallback.
 const CDN = [
   'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap',
   'https://cdn.tailwindcss.com',
@@ -44,27 +52,63 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// A request is "shell" if it's the page itself (navigation) or one of the
+// mutable same-origin documents that can change between deploys. The data
+// manifest is included so a future v0.3 with new chapters propagates without
+// a manual cache clear.
+function isShellRequest(req) {
+  if (req.mode === 'navigate') return true;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return false;
+  const p = url.pathname;
+  return p.endsWith('/') ||
+         p.endsWith('/index.html') ||
+         p.endsWith('/MANIFEST.json');
+}
+
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  e.respondWith(isShellRequest(req) ? networkFirst(req) : cacheFirst(req));
+});
 
-  e.respondWith((async () => {
+async function networkFirst(req) {
+  try {
+    // {cache: 'reload'} skips the browser HTTP cache so we always see the
+    // freshest copy from origin (GitHub Pages' default Cache-Control would
+    // otherwise let us re-serve a 10-minute-old HTML).
+    const res = await fetch(req, { cache: 'reload' });
+    if (res && res.ok) {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {});
+    }
+    return res;
+  } catch (err) {
     const cached = await caches.match(req);
     if (cached) return cached;
-
-    try {
-      const res = await fetch(req);
-      if (res && (res.ok || res.type === 'opaque')) {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {});
-      }
-      return res;
-    } catch (err) {
-      if (req.mode === 'navigate') {
-        const fallback = await caches.match('index.html');
-        if (fallback) return fallback;
-      }
-      throw err;
+    if (req.mode === 'navigate') {
+      const fallback = await caches.match('index.html');
+      if (fallback) return fallback;
     }
-  })());
-});
+    throw err;
+  }
+}
+
+async function cacheFirst(req) {
+  const cached = await caches.match(req);
+  if (cached) return cached;
+  try {
+    const res = await fetch(req);
+    if (res && (res.ok || res.type === 'opaque')) {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(req, clone)).catch(() => {});
+    }
+    return res;
+  } catch (err) {
+    if (req.mode === 'navigate') {
+      const fallback = await caches.match('index.html');
+      if (fallback) return fallback;
+    }
+    throw err;
+  }
+}
