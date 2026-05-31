@@ -47,8 +47,13 @@ RUNNING_LINE_RE = re.compile(
     (?:
         # "<page-num> | A L L A N D E V E RY T H I N G..." -- spaced-cap book title
         \d+\s*\|\s*[A-Z](?:\s+[A-Z])+ |
-        # "<title> | <page-num>" or "<roman-numeral> | <title>"
-        [A-Za-z][\w\s,’'\-:!?]*?\s*\|\s*\d+ |
+        # "<chapter title> | <page-num>" -- recto running head. The title may
+        # contain quotes (“ ”), an ellipsis (…, used when a long title is
+        # truncated in the running head), commas, colons, etc., so accept any
+        # run of non-pipe characters before the page number rather than an
+        # enumerated character class (every "|" in this corpus is a header).
+        [A-Za-z][^|]*?\|\s*\d+ |
+        # "<roman-numeral> | <title>"
         [ivxlcdm]+\s*\|\s*[A-Za-z]
     )
     .*$
