@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "snapshot_id": "local-20260531T120032Z",
-  "generated_at": "2026-05-31T12:00:32.630199+00:00",
+  "snapshot_id": "local-20260614T115429Z",
+  "generated_at": "2026-06-14T11:54:29.308928+00:00",
   "repository": "",
   "git_sha": "",
   "source": {
@@ -16,7 +16,7 @@
   },
   "counts": {
     "chapters": 48,
-    "chapter_paragraphs": 6585,
+    "chapter_paragraphs": 6577,
     "front_matter_paragraphs": 11,
     "distinct_pages": 1238,
     "data_files": 49
@@ -267,7 +267,7 @@
       "title": "The Sixth and Last Sojourn of Beelzebub on the Planet Earth",
       "page_start": 524,
       "page_end": 557,
-      "paragraphs": 211,
+      "paragraphs": 210,
       "file": "data/ch31.json"
     },
     {
@@ -283,7 +283,7 @@
       "title": "Beelzebub as Professional Hypnotist",
       "page_start": 579,
       "page_end": 590,
-      "paragraphs": 64,
+      "paragraphs": 63,
       "file": "data/ch33.json"
     },
     {
@@ -315,7 +315,7 @@
       "title": "France",
       "page_start": 663,
       "page_end": 693,
-      "paragraphs": 192,
+      "paragraphs": 190,
       "file": "data/ch37.json"
     },
     {
@@ -355,7 +355,7 @@
       "title": "Beelzebub in America",
       "page_start": 918,
       "page_end": 1054,
-      "paragraphs": 812,
+      "paragraphs": 809,
       "file": "data/ch42.json"
     },
     {
@@ -379,7 +379,7 @@
       "title": "In the Opinion of Beelzebub, Man’s Extraction of Electricity from Nature and Its Destruction",
       "page_start": 1145,
       "page_end": 1160,
-      "paragraphs": 93,
+      "paragraphs": 92,
       "file": "data/ch45.json"
     },
     {

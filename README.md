@@ -43,7 +43,7 @@ scholars — who wants to work with *Beelzebub's Tales* in a programmable form.
 
 ## What's in v0.2
 
-- **All 48 chapters**, fully extracted, ~6,585 paragraphs, 1,238 pages
+- **All 48 chapters**, fully extracted, ~6,577 paragraphs, 1,238 pages
 - **Per-paragraph anchors** in the form `1.4`, `1.5-6`, `48.1210-1`, preserved
   verbatim from the print and cross-stored as structured `page_start` /
   `page_end`

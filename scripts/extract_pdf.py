@@ -266,6 +266,17 @@ def parse(text: str) -> tuple[list[Chapter], list[Paragraph]]:
             i += 1
             continue
 
+        # Skip Vellum scene-break ornaments. The typesetting places a small
+        # decorative glyph between some paragraphs; pdftotext renders it as a
+        # bare "∅" (U+2205) on its own centered line in the chapter body (and
+        # as a bare "2" in the front matter, handled below). It carries no
+        # text, and paragraphs in the body are already delimited by their
+        # anchors, so we drop it exactly like a blank line -- otherwise it
+        # surfaces as a spurious one-character "∅" paragraph in the output.
+        if stripped == "∅":
+            i += 1
+            continue
+
         # Detect a chapter title page: centered number then (after blanks) an
         # all-caps title that may span 1-3 lines. Centered means indented at
         # least 4 spaces.
